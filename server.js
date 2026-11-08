@@ -21,7 +21,11 @@ app.post('/api/diagnose', async (req, res) => {
   const { goal, situation, priority, freetext } = req.body;
 
   const freetextLine = freetext && freetext.trim()
-    ? `- その他のコメント: ${freetext}`
+    ? `- 【最重要】お客様の生の声（必ずこの内容を診断結果に反映してください）: ${freetext}`
+    : '';
+
+  const freetextInstruction = freetext && freetext.trim()
+    ? `特に「お客様の生の声」に書かれた具体的な内容・状況・言葉を最優先で参照し、reason や first_step に必ず反映してください。`
     : '';
 
   const prompt = `あなたは仙台のクリエイター「Hi Dawn」の相談アドバイザーです。
@@ -40,6 +44,7 @@ ${freetextLine}
 
 この方に最もぴったりのサービスを1〜2個選んでください。
 サービスを2個選ぶ場合は、一緒に進めると効果的な組み合わせのときだけにしてください。
+${freetextInstruction}
 
 以下のJSON形式のみで返してください（JSON以外のテキストは含めないこと）：
 
