@@ -9,6 +9,12 @@ const PORT = process.env.PORT || 3001;
 app.use(express.json());
 app.use(express.static('public'));
 
+// iframe埋め込みを許可（X-Frame-Options: SAMEORIGIN をRenderが付けるため除去）
+app.use((req, res, next) => {
+  res.removeHeader('X-Frame-Options');
+  next();
+});
+
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 app.post('/api/diagnose', async (req, res) => {
