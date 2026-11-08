@@ -21,11 +21,17 @@ app.post('/api/diagnose', async (req, res) => {
   const { goal, situation, priority, freetext } = req.body;
 
   const freetextLine = freetext && freetext.trim()
-    ? `- 【最重要】お客様の生の声（必ずこの内容を診断結果に反映してください）: ${freetext}`
+    ? `- お客様の補足コメント: 「${freetext}」`
     : '';
 
   const freetextInstruction = freetext && freetext.trim()
-    ? `特に「お客様の生の声」に書かれた具体的な内容・状況・言葉を最優先で参照し、reason や first_step に必ず反映してください。`
+    ? `
+【補足コメントの扱い方 — 最重要】
+補足コメントに書かれた内容を以下のルールで必ず扱ってください。
+1. 補足コメントをそのまま正確に理解し、書かれていないことを勝手に補わない。
+2. 補足コメントの内容と矛盾する説明を reason に書かない（例：「決まっている」と書かれているのに「まだ決まっていない」と書くのは禁止）。
+3. reason の中で補足コメントの具体的な状況・言葉に直接言及し、その方の状況に合わせた提案をする。
+4. first_step も補足コメントの状況を踏まえた具体的な次の一歩にする。`
     : '';
 
   const prompt = `あなたは仙台のクリエイター「Hi Dawn」の相談アドバイザーです。
@@ -41,10 +47,10 @@ Hi Dawnのサービスは以下の4つです：
 - 現在の状況: ${situation}
 - 重視すること: ${priority}
 ${freetextLine}
+${freetextInstruction}
 
 この方に最もぴったりのサービスを1〜2個選んでください。
 サービスを2個選ぶ場合は、一緒に進めると効果的な組み合わせのときだけにしてください。
-${freetextInstruction}
 
 以下のJSON形式のみで返してください（JSON以外のテキストは含めないこと）：
 
